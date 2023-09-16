@@ -1,0 +1,30 @@
+body {
+    margin: 0;
+}
+#tooltip {
+    position: absolute;
+    user-select: none;
+    background-color: lightgray;
+    font-size: 10px;
+    font-family: monospace;
+    border-radius: 2px;
+    border: 1px solid black;
+    padding: 5px;
+}
+#content {
+    display: flex;
+    width: 100vw;
+    align-items: center;
+    font-family: monospace;
+    flex-direction: column;
+    gap: 15px;
+}
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+svg {
+    height: 100% !important;
+    width: auto !important;
+}
