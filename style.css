@@ -25,6 +25,6 @@ body {
 }
 
 svg {
-    height: 100% !important;
-    width: auto !important;
+    /* Hardcode the aspect ratio of the svg here so that it is sized right */
+    aspect-ratio: 930/452.315;
 }

@@ -1,3 +1,5 @@
+const SCROLL_SPD = 1/600;
+
 addEventListener("DOMContentLoaded", async () => {
     container = document.getElementById("mapContainer");
     map = await (await fetch("map.svg")).text();
@@ -13,7 +15,57 @@ addEventListener("DOMContentLoaded", async () => {
             node.setAttribute("data-biome", biomes["groups"][color]["label"]);
         }
     }
+    mapNavigation(container.firstChild, container.firstChild.firstChild)
 })
+
+// Map can be navigated by dragging and scrolling
+function mapNavigation(container, mapSvgGroup) {
+    // warrantied to avoid pain and suffering
+    mapSvgGroup.style.transformOrigin = "0 0";
+
+    let scale = 1;
+    let translationX = 0;
+    let translationY = 0;
+
+    // We don't set the viewbox anywhere because it is painful to work with. We can instead transform the <g> tag. We must scale before translating for prosperity.
+    let updateTransform = () => mapSvgGroup.style.transform = `scale(${scale}) translate(${translationX}px, ${translationY}px)`;
+    updateTransform();
+
+    container.onwheel = event => {
+        // Prevent page zoom with ctrl scroll
+        event.preventDefault();
+
+        // Dodgey formula to ensure that scrolling in then out lands at the same place.
+        let zoomFactor = 1 + Math.abs(event.deltaY * SCROLL_SPD);
+        if (event.deltaY > 0) zoomFactor = 1 / zoomFactor;
+        scale *= zoomFactor;
+
+        // Centre scroll around cursor
+        const { x, y, width, height } = container.getBoundingClientRect();
+        const scaledViewportWidth = width / zoomFactor;
+        const scaledViewportHeight = height / zoomFactor;
+        const changeInWidth = width - scaledViewportWidth;
+        const changeInHeight = height - scaledViewportHeight;
+        const deltaX = changeInWidth * ((event.x - x) / width);
+        const deltaY = changeInHeight * ((event.y - y) / height);
+        translationX -= (deltaX / scale) * zoomFactor;
+        translationY -= (deltaY / scale) * zoomFactor;
+
+        updateTransform();
+    };
+    container.onpointermove = event => {
+        // Ensure some button is clicked. Note `buttons` vs `button`.
+        if (event.buttons == 0) {
+            return;
+        }
+
+        // Divide by scale so that it moves by less when more zoomed in.
+        translationX += event.movementX / scale;
+        translationY += event.movementY / scale;
+
+        updateTransform();
+    };
+}
 
 addEventListener("mousemove", event => {
     tip = document.getElementById("tooltip");
