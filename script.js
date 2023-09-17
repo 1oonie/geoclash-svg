@@ -42,11 +42,24 @@ fileinput.onchange = async () => {
         }
     }
     for (color of Object.keys(newmap["groups"])) {
-        console.log(color);
+        let fill;
+        let stroke;
+        if (color.startsWith("diagonal3_")) {
+            console.log(color)
+            fill = "#" + color.slice(10, 16);
+            stroke = "#" + color.slice(17);
+        } else {
+            fill = color;
+            stroke = null
+        }
         for (hex of newmap["groups"][color]["paths"]) {
             node = document.getElementById(hex);
             if (node !== null) {
-                node.style["fill"] = color;
+                node.style["fill"] = fill;
+                if (stroke !== null) {
+                    node.style["stroke"] = stroke;
+                    node.style["stroke-width"] = "1px";
+                }
                 node.setAttribute("data-label", newmap["groups"][color]["label"]);
             }
         }
