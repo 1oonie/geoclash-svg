@@ -78,7 +78,7 @@ addEventListener("mousemove", event => {
         } else {
             tip.innerHTML = `${event.target.id.replace('_', ' ')} - ${biome}`;
         }
-    } else {
+    } else if (!(tip === event.target)) {
         tip.hidden = true;
     }
 })
