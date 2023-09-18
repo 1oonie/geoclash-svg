@@ -4,8 +4,6 @@ addEventListener("DOMContentLoaded", async () => {
     container = document.getElementById("mapContainer");
     map = await (await fetch("map.svg")).text();
     container.innerHTML = map;
-    container.children[0].setAttribute("height", "auto");
-    container.children[0].setAttribute("width", "auto");
     biomes = await (await fetch("biomes.json")).json();
 
     for (color of Object.keys(biomes.groups)) {
@@ -54,6 +52,7 @@ function mapNavigation(container, mapSvgGroup) {
         updateTransform();
     };
     container.onpointermove = event => {
+        container.setPointerCapture(event.pointerId);
         // Ensure some button is clicked. Note `buttons` vs `button`.
         if (event.buttons == 0) {
             return;
